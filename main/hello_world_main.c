@@ -15,6 +15,7 @@
 void app_main(void)
 {
     printf("Hello world!\n");
+    printf("\nHey, I am imc and I am here in ESP32. Wait to see more from me!\n\n");
 
     /* Print chip information */
     esp_chip_info_t chip_info;
