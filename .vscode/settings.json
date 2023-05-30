@@ -8,6 +8,9 @@
   "idf.portWin": "COM4",
   "idf.flashType": "UART",
   "files.associations": {
-    "esp_flash.h": "c"
+    "esp_flash.h": "c",
+    "esp_chip_info.h": "c",
+    "led_strip.h": "c",
+    "esp_log.h": "c"
   }
 }
