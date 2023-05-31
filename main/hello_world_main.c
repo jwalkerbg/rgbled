@@ -92,11 +92,13 @@ void app_main(void)
     /* Configure the peripheral according to the LED type */
     configure_led();
 
+    // blue sunrise, red sunset
+
     uint32_t red, green, blue;
-    red = LED_START_0_3; green = LED_START_1_3; blue = LED_START_2_3;
+    red = LED_START_0_3; green = LED_START_0_3; blue = LED_START_0_3;
     bool redDir, greenDir, blueDir;
     redDir = true; greenDir = true; blueDir = true;
-    led_red_on = true; led_green_on = true; led_blue_on = true;
+    led_red_on = false; led_green_on = false; led_blue_on = true;
 
     ESP_LOGI(TAG,"========== Cycle %u begins", LED_TOTAL_CYCLES - (cycles - 1));
     do {
@@ -151,6 +153,12 @@ void app_main(void)
         if (led_blue_on) {
             if (blueDir) {
                 ++blue;
+                if (!led_green_on && (blue == (LED_START_1_3))) {
+                    led_green_on = true;
+                }
+                if (!led_red_on && (blue == (LED_START_2_3))) {
+                    led_red_on = true;
+                }
                 if (blue == (LED_MAX_INTENSITY)) {
                     blueDir = false;
                     blue = (LED_MAX_INTENSITY) - 1;
