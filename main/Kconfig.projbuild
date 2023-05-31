@@ -33,4 +33,19 @@ menu "Application Configuration"
         default 100
         help
             Define the maximum intensity of the LED as 8-bit unsigned value.
+
+    config LED_TOTAL_CYCLES
+        int "LED_TOTAL_CYCLES: How many min-max cycles to be performed before restart"
+        range 5 32767
+        default 100
+        help
+            Define how cycles of rising up / fading down will perform the LEDs befor the system will be restarted.
+
+    config RESTART_DELAY
+        int "RESTART_DELAY: Delay after leds are turned off"
+        range 2 60
+        default 10
+        help
+            Define time interval between switch off LEDs and restarting.
+
 endmenu

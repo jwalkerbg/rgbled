@@ -21,6 +21,10 @@ static const char *TAG = "led&hello";
 #define STEP_INTERVAL (CONFIG_LED_STEP_INTERVAL)
 #define LED_MIN_INTENSITY (CONFIG_LED_MIN_INTENSITY)
 #define LED_MAX_INTENSITY (CONFIG_LED_MAX_INTENSITY)
+#define LED_TOTAL_CYCLES (CONFIG_LED_TOTAL_CYCLES)
+#define RESTART_DELAY (CONFIG_RESTART_DELAY)
+
+#define TIME_INTERVAL_1S    (1000)  // in [ms]
 
 static led_strip_handle_t led_strip;
 
@@ -50,6 +54,12 @@ static void configure_led(void)
 
 void app_main(void)
 {
+    bool led_loop_active = true;
+    bool led_red_off;
+    bool led_green_off;
+    bool led_blue_off;
+    int cycles = LED_TOTAL_CYCLES;
+
     printf("Hello world!\n");
     printf("\nHey, I am imc and I am here in ESP32. Wait to see more from me!\n\n");
 
@@ -83,59 +93,89 @@ void app_main(void)
     red = 0u; green = 40u; blue = 80u;
     bool redDir, greenDir, blueDir;
     redDir = true; greenDir = true; blueDir = true;
+    led_red_off = false; led_green_off = false; led_blue_off = false;
     do {
         color_led(red,green,blue);
 
-        if (redDir) {
-            ++red;
-            if (red == (LED_MAX_INTENSITY)) {
-                redDir = false;
-                red = (LED_MAX_INTENSITY) - 1;
-                ESP_LOGI(TAG,"Red is fading down");
+        if (!led_red_off) {
+            if (redDir) {
+                ++red;
+                if (red == (LED_MAX_INTENSITY)) {
+                    redDir = false;
+                    red = (LED_MAX_INTENSITY) - 1;
+                    ESP_LOGI(TAG,"Red is fading down");
+                }
             }
-        }
-        else {
-            --red;
-            if (red == (LED_MIN_INTENSITY)) {
-                redDir = true;
-                ESP_LOGI(TAG,"Red is rising up");
-            }
-        }
-
-        if (greenDir) {
-            ++green;
-            if (green == (LED_MAX_INTENSITY)) {
-                greenDir = false;
-                green = (LED_MAX_INTENSITY) - 1;
-                ESP_LOGI(TAG,"Green is fading down");
-            }
-        }
-        else {
-            --green;
-            if (green == (LED_MIN_INTENSITY)) {
-                greenDir = true;
-                ESP_LOGI(TAG,"Green is rising up");
+            else {
+                --red;
+                if (red == (LED_MIN_INTENSITY)) {
+                    if (cycles == 0) {
+                        led_red_off = true;
+                    }
+                    else {
+                        redDir = true;
+                        ESP_LOGI(TAG,"Red is rising up");
+                    }
+                }
             }
         }
 
-        if (blueDir) {
-            ++blue;
-            if (blue == (LED_MAX_INTENSITY)) {
-                blueDir = false;
-                blue = (LED_MAX_INTENSITY) - 1;
-                ESP_LOGI(TAG,"Blue is fading down");
+        if (!led_green_off) {
+            if (greenDir) {
+                ++green;
+                if (green == (LED_MAX_INTENSITY)) {
+                    greenDir = false;
+                    green = (LED_MAX_INTENSITY) - 1;
+                    ESP_LOGI(TAG,"Green is fading down");
+                }
             }
-        }
-        else {
-            --blue;
-            if (blue == (LED_MIN_INTENSITY)) {
-                blueDir = true;
-                ESP_LOGI(TAG,"Blue is rising up");
+            else {
+                --green;
+                if (green == (LED_MIN_INTENSITY)) {
+                    if (cycles == 0) {
+                        led_green_off = true;
+                    }
+                    else {
+                        greenDir = true;
+                        ESP_LOGI(TAG,"Green is rising up");
+                    }
+                }
+            }
+        }   
+
+        if (!led_blue_off) {
+            if (blueDir) {
+                ++blue;
+                if (blue == (LED_MAX_INTENSITY)) {
+                    blueDir = false;
+                    blue = (LED_MAX_INTENSITY) - 1;
+                    ESP_LOGI(TAG,"Blue is fading down");
+                }
+            }
+            else {
+                --blue;
+                if (blue == (LED_MIN_INTENSITY)) {
+                    if (--cycles == 0) {
+                        led_blue_off = true;
+                    }
+                    else {
+                        blueDir = true;
+                        ESP_LOGI(TAG,"========== Cycle %u begins", cycles);
+                        ESP_LOGI(TAG,"Blue is rising up");
+                    }
+                }
             }
         }
 
         vTaskDelay((STEP_INTERVAL) / portTICK_PERIOD_MS);
-    } while(1);
+    } while(!led_red_off || !led_green_off || !led_blue_off);
+
+    color_led(red,green,blue);
+
+    for (int i = RESTART_DELAY; i >= 0; i--) {
+        printf("Restarting in %d seconds...\n", i);
+        vTaskDelay(TIME_INTERVAL_1S / portTICK_PERIOD_MS);
+    }
 
     printf("Restarting now.\n");
     fflush(stdout);

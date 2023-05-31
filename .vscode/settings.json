@@ -12,5 +12,6 @@
     "esp_chip_info.h": "c",
     "led_strip.h": "c",
     "esp_log.h": "c"
-  }
+  },
+  "cmake.configureOnOpen": false
 }
