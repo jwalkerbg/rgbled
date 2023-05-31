@@ -93,6 +93,8 @@ void app_main(void)
     bool redDir, greenDir, blueDir;
     redDir = true; greenDir = true; blueDir = true;
     led_red_off = false; led_green_off = false; led_blue_off = false;
+
+    ESP_LOGI(TAG,"========== Cycle %u begins", LED_TOTAL_CYCLES - (cycles - 1));
     do {
         color_led(red,green,blue);
 
@@ -159,7 +161,7 @@ void app_main(void)
                     }
                     else {
                         blueDir = true;
-                        ESP_LOGI(TAG,"========== Cycle %u begins", cycles);
+                        ESP_LOGI(TAG,"========== Cycle %u begins", LED_TOTAL_CYCLES - (cycles - 1));
                         ESP_LOGI(TAG,"Blue is rising up");
                     }
                 }
@@ -171,8 +173,10 @@ void app_main(void)
 
     color_led(red,green,blue);
 
+    ESP_LOGI(TAG,"========== Lights are turned off. Good night.");
+
     for (int i = RESTART_DELAY; i >= 0; i--) {
-        ESP_LOGI(TAG,"Restarting in %d seconds...\n", i);
+        ESP_LOGI(TAG,"Restarting in %d seconds...", i);
         vTaskDelay(TIME_INTERVAL_1S / portTICK_PERIOD_MS);
     }
 
