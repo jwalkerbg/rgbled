@@ -24,6 +24,10 @@ static const char *TAG = "led&hello";
 #define LED_TOTAL_CYCLES (CONFIG_LED_TOTAL_CYCLES)
 #define RESTART_DELAY (CONFIG_RESTART_DELAY)
 
+#define LED_START_0_3   (LED_MIN_INTENSITY)
+#define LED_START_1_3   ((LED_MAX_INTENSITY-LED_MIN_INTENSITY) / 3u)
+#define LED_START_2_3   (((LED_MAX_INTENSITY-LED_MIN_INTENSITY) * 2u) / 3u)
+
 #define TIME_INTERVAL_1S    (1000)  // in [ms]
 
 static led_strip_handle_t led_strip;
@@ -89,7 +93,7 @@ void app_main(void)
     configure_led();
 
     uint32_t red, green, blue;
-    red = 0u; green = 40u; blue = 80u;
+    red = LED_START_0_3; green = LED_START_1_3; blue = LED_START_2_3;
     bool redDir, greenDir, blueDir;
     redDir = true; greenDir = true; blueDir = true;
     led_red_on = true; led_green_on = true; led_blue_on = true;
