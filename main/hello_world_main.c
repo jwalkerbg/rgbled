@@ -54,9 +54,9 @@ static void configure_led(void)
 
 void app_main(void)
 {
-    bool led_red_off;
-    bool led_green_off;
-    bool led_blue_off;
+    bool led_red_on;
+    bool led_green_on;
+    bool led_blue_on;
     int cycles = LED_TOTAL_CYCLES;
 
     printf("Hello world!\n");
@@ -92,13 +92,13 @@ void app_main(void)
     red = 0u; green = 40u; blue = 80u;
     bool redDir, greenDir, blueDir;
     redDir = true; greenDir = true; blueDir = true;
-    led_red_off = false; led_green_off = false; led_blue_off = false;
+    led_red_on = true; led_green_on = true; led_blue_on = true;
 
     ESP_LOGI(TAG,"========== Cycle %u begins", LED_TOTAL_CYCLES - (cycles - 1));
     do {
         color_led(red,green,blue);
 
-        if (!led_red_off) {
+        if (led_red_on) {
             if (redDir) {
                 ++red;
                 if (red == (LED_MAX_INTENSITY)) {
@@ -111,7 +111,7 @@ void app_main(void)
                 --red;
                 if (red == (LED_MIN_INTENSITY)) {
                     if (cycles == 0) {
-                        led_red_off = true;
+                        led_red_on = false;
                     }
                     else {
                         redDir = true;
@@ -121,7 +121,7 @@ void app_main(void)
             }
         }
 
-        if (!led_green_off) {
+        if (led_green_on) {
             if (greenDir) {
                 ++green;
                 if (green == (LED_MAX_INTENSITY)) {
@@ -134,7 +134,7 @@ void app_main(void)
                 --green;
                 if (green == (LED_MIN_INTENSITY)) {
                     if (cycles == 0) {
-                        led_green_off = true;
+                        led_green_on = false;
                     }
                     else {
                         greenDir = true;
@@ -144,7 +144,7 @@ void app_main(void)
             }
         }   
 
-        if (!led_blue_off) {
+        if (led_blue_on) {
             if (blueDir) {
                 ++blue;
                 if (blue == (LED_MAX_INTENSITY)) {
@@ -157,7 +157,7 @@ void app_main(void)
                 --blue;
                 if (blue == (LED_MIN_INTENSITY)) {
                     if (--cycles == 0) {
-                        led_blue_off = true;
+                        led_blue_on = false;
                     }
                     else {
                         blueDir = true;
@@ -169,7 +169,7 @@ void app_main(void)
         }
 
         vTaskDelay((STEP_INTERVAL) / portTICK_PERIOD_MS);
-    } while(!led_red_off || !led_green_off || !led_blue_off);
+    } while(led_red_on || led_green_on || led_blue_on);
 
     color_led(red,green,blue);
 
