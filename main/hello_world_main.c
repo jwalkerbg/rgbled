@@ -19,7 +19,6 @@ static const char *TAG = "led&hello";
 
 #define BLINK_GPIO 48
 
-static uint8_t s_led_state = 0;
 static led_strip_handle_t led_strip;
 
 static void color_led(uint32_t red, uint32_t green, uint32_t blue);
@@ -86,43 +85,49 @@ void app_main(void)
 
         if (redDir) {
             ++red;
-            if (red == 100) {
+            if (red == 150) {
                 redDir = false;
-                red = 99;
+                red = 149;
+                ESP_LOGI(TAG,"Red is fading down");
             }
         }
         else {
             --red;
             if (red == 0) {
                 redDir = true;
+                ESP_LOGI(TAG,"Red is rising up");
             }
         }
 
         if (greenDir) {
             ++green;
-            if (green == 100) {
+            if (green == 150) {
                 greenDir = false;
-                green = 99;
+                green = 149;
+                ESP_LOGI(TAG,"Green is fading down");
             }
         }
         else {
             --green;
             if (green == 0) {
                 greenDir = true;
+                ESP_LOGI(TAG,"Green is rising up");
             }
         }
 
         if (blueDir) {
             ++blue;
-            if (blue == 100) {
+            if (blue == 150) {
                 blueDir = false;
-                blue = 99;
+                blue = 149;
+                ESP_LOGI(TAG,"Blue is fading down");
             }
         }
         else {
             --blue;
             if (blue == 0) {
                 blueDir = true;
+                ESP_LOGI(TAG,"Blue is rising up");
             }
         }
 
