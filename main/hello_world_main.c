@@ -17,7 +17,10 @@
 
 static const char *TAG = "led&hello";
 
-#define BLINK_GPIO 48
+#define RGBLED_GPIO (CONFIG_RGBLED_GPIO)
+#define STEP_INTERVAL (CONFIG_LED_STEP_INTERVAL)
+#define LED_MIN_INTENSITY (CONFIG_LED_MIN_INTENSITY)
+#define LED_MAX_INTENSITY (CONFIG_LED_MAX_INTENSITY)
 
 static led_strip_handle_t led_strip;
 
@@ -34,7 +37,7 @@ static void configure_led(void)
     ESP_LOGI(TAG, "Example configured to blink addressable LED!");
     /* LED strip initialization with the GPIO and pixels number*/
     led_strip_config_t strip_config = {
-        .strip_gpio_num = BLINK_GPIO,
+        .strip_gpio_num = RGBLED_GPIO,
         .max_leds = 1, // at least one LED on board
     };
     led_strip_rmt_config_t rmt_config = {
@@ -85,15 +88,15 @@ void app_main(void)
 
         if (redDir) {
             ++red;
-            if (red == 150) {
+            if (red == (LED_MAX_INTENSITY)) {
                 redDir = false;
-                red = 149;
+                red = (LED_MAX_INTENSITY) - 1;
                 ESP_LOGI(TAG,"Red is fading down");
             }
         }
         else {
             --red;
-            if (red == 0) {
+            if (red == (LED_MIN_INTENSITY)) {
                 redDir = true;
                 ESP_LOGI(TAG,"Red is rising up");
             }
@@ -101,15 +104,15 @@ void app_main(void)
 
         if (greenDir) {
             ++green;
-            if (green == 150) {
+            if (green == (LED_MAX_INTENSITY)) {
                 greenDir = false;
-                green = 149;
+                green = (LED_MAX_INTENSITY) - 1;
                 ESP_LOGI(TAG,"Green is fading down");
             }
         }
         else {
             --green;
-            if (green == 0) {
+            if (green == (LED_MIN_INTENSITY)) {
                 greenDir = true;
                 ESP_LOGI(TAG,"Green is rising up");
             }
@@ -117,28 +120,23 @@ void app_main(void)
 
         if (blueDir) {
             ++blue;
-            if (blue == 150) {
+            if (blue == (LED_MAX_INTENSITY)) {
                 blueDir = false;
-                blue = 149;
+                blue = (LED_MAX_INTENSITY) - 1;
                 ESP_LOGI(TAG,"Blue is fading down");
             }
         }
         else {
             --blue;
-            if (blue == 0) {
+            if (blue == (LED_MIN_INTENSITY)) {
                 blueDir = true;
                 ESP_LOGI(TAG,"Blue is rising up");
             }
         }
 
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay((STEP_INTERVAL) / portTICK_PERIOD_MS);
     } while(1);
 
-
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
     printf("Restarting now.\n");
     fflush(stdout);
     esp_restart();
