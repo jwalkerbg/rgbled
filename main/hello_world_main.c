@@ -54,7 +54,6 @@ static void configure_led(void)
 
 void app_main(void)
 {
-    bool led_loop_active = true;
     bool led_red_off;
     bool led_green_off;
     bool led_blue_off;
@@ -173,7 +172,7 @@ void app_main(void)
     color_led(red,green,blue);
 
     for (int i = RESTART_DELAY; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
+        ESP_LOGI(TAG,"Restarting in %d seconds...\n", i);
         vTaskDelay(TIME_INTERVAL_1S / portTICK_PERIOD_MS);
     }
 
